@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">DartCounter</string>
+    <string name="play_with_a_friend">Play with New a Friend</string>
+    <string name="player_1_name">Player 1 Name</string>
+    <string name="player_2_name">Player 2 Name</string>
+    <string name="start_game">Start Game</string>
+    <string name="current_turn_player_1">Current Turn: Player 1</string>
+    <string name="_501">501</string>
+    <string name="enter_dart_score">Enter Dart Score</string>
+    <string name="submit_score">Submit Score</string>
+    <string name="first_to_sets_3_legs_per_set">First to Sets (3 Legs per Set)</string>
+    <string name="first_to_legs">First to Legs</string>
+    <string name="match_rules">Match Rules</string>
+    <string name="enter_number_of_legs_or_sets">Enter number of Legs or Sets</string>
+    <string name="start_match">Start Match</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/player1Name"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/player_1_name" />
+
+    <EditText
+        android:id="@+id/player2Name"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/player_2_name" />
+
+    <Button
+        android:id="@+id/startGameButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_game"
+        android:layout_gravity="center" />
+
+</LinearLayout>

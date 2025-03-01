@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/match_rules"
+        android:textSize="24sp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <RadioGroup
+        android:id="@+id/matchModeGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/legsMode"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/first_to_legs"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/setsMode"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/first_to_sets_3_legs_per_set" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/numberInput"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="@string/enter_number_of_legs_or_sets"
+        android:inputType="number"
+        android:layout_marginTop="20dp" />
+
+    <Button
+        android:id="@+id/startMatchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_match"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
+</LinearLayout>
