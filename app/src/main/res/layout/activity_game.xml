@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Player Scores Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,61 +16,277 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/player1NameText"
+            android:orientation="vertical"
+            android:gravity="center">
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:id="@+id/player1Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_user" />
+                <TextView
+                    android:id="@+id/player1LegsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Legs: 0"
+                    android:textSize="20sp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
             <TextView
                 android:id="@+id/player1ScoreText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_501"
-                android:textSize="30sp" />
+                android:text="501"
+                android:layout_marginBottom="8dp"
+                android:textSize="60sp" />
+            <TextView
+                android:id="@+id/player1AvgText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3-Dart AVG: 0.0"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/player1NineDartAvgText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="First 9 AVG: 0.0"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/player1LastScoreText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Score: 0"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/player1DartsThrownText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Darts Thrown: 0"
+                android:textSize="20sp" />
         </LinearLayout>
 
+        <!-- Divider -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            android:textSize="30sp"
+            android:layout_marginHorizontal="8dp" />
+
+        <!-- Player 2 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/player2NameText"
+            android:orientation="vertical"
+            android:gravity="center">
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:id="@+id/player2Icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_user" />
+                <TextView
+                    android:id="@+id/player2LegsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Legs: 0"
+                    android:textSize="20sp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
             <TextView
                 android:id="@+id/player2ScoreText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_501"
-                android:textSize="30sp" />
+                android:text="501"
+                android:layout_marginBottom="8dp"
+                android:textSize="60sp" />
+            <TextView
+                android:id="@+id/player2AvgText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3-Dart AVG: 0.0"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/player2NineDartAvgText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="First 9 AVG: 0.0"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/player2LastScoreText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Score: 0"
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/player2DartsThrownText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Darts Thrown: 0"
+                android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Mode and Turn Section -->
     <TextView
-        android:id="@+id/currentTurnText"
+        android:id="@+id/modeText"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="@string/current_turn_player_1"
+        android:layout_height="wrap_content"
+        android:text="Mode: First to X Legs"
         android:textSize="18sp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp" />
 
-    <EditText
-        android:id="@+id/scoreInput"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="@string/enter_dart_score"
-        android:inputType="number"
-        android:layout_marginTop="20dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:id="@+id/currentTurnText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Player1's turn to throw"
+            android:textSize="16sp" />
+        <ImageView
+            android:id="@+id/backspaceIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_delete"
+            android:contentDescription="Backspace" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/submitScoreButton"
+    <!-- Total Score Display -->
+    <TextView
+        android:id="@+id/totalScoreText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/submit_score"
+        android:text=""
+        android:textSize="24sp"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="10dp" />
+
+    <!-- Number Pad and Submit Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <Button
+                android:id="@+id/btn1"
+                android:text="1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+            <Button
+                android:id="@+id/btn2"
+                android:text="2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="5dp" />
+            <Button
+                android:id="@+id/btn3"
+                android:text="3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+            <Button
+                android:id="@+id/btn4"
+                android:text="4"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+            <Button
+                android:id="@+id/btn5"
+                android:text="5"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="5dp" />
+            <Button
+                android:id="@+id/btn6"
+                android:text="6"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+            <Button
+                android:id="@+id/btn7"
+                android:text="7"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+            <Button
+                android:id="@+id/btn8"
+                android:text="8"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp"
+                android:layout_marginHorizontal="5dp" />
+            <Button
+                android:id="@+id/btn9"
+                android:text="9"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+            <Button
+                android:id="@+id/btn0"
+                android:text="0"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="60dp" />
+            <Button
+                android:id="@+id/submitScoreButton"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="Submit"
+                android:backgroundTint="#00FF00"
+                android:layout_marginStart="5dp" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
