@@ -1,4 +1,5 @@
 <resources>
+    <!-- Existing Strings -->
     <string name="app_name">DartCounter</string>
     <string name="play_with_a_friend">Play with New a Friend</string>
     <string name="player_1_name">Player 1 Name</string>
@@ -13,4 +14,37 @@
     <string name="match_rules">Match Rules</string>
     <string name="enter_number_of_legs_or_sets">Enter number of Legs or Sets</string>
     <string name="start_match">Start Match</string>
+
+    <!-- New Strings for GameActivity -->
+    <string name="mode_text">Mode: First to %1$s %2$d</string>
+    <string name="current_turn_text">%1$s\'s turn to throw</string>
+    <string name="invalid_input_message">Please enter a valid score (0-180)</string>
+    <string name="invalid_score_message">Invalid score: Cannot go below 0 or leave 1</string>
+    <string name="leg_win_toast">%1$s wins a leg!</string>
+    <string name="legs_text">%1$s: %2$d</string>
+    <string name="darts_thrown_text">Darts Thrown: %1$d</string>
+    <string name="last_score_text">Last Score: %1$d</string>
+    <string name="three_dart_avg_text">3-Dart AVG: %1$s</string>
+    <string name="nine_dart_avg_text">9-Dart AVG: %1$s</string>
+    <string name="audio_not_found_toast">Audio file for score %1$d not found, using TTS fallback</string>
+    <string name="audio_error_toast">Error playing audio: %1$s</string>
+    <string name="game_over_title">Game Over</string>
+    <string name="statistics_header">Statistics</string>
+    <string name="three_dart_avg_line">3-Dart Avg.                          %1$s                  %2$s</string>
+    <string name="first_nine_avg_line">First 9 Avg.                         %1$s                  %2$s</string>
+    <string name="highest_score_line">Highest Score                     %1$d                 %2$d</string>
+    <string name="checkouts_header">Checkouts</string>
+    <string name="highest_finish_line">Highest Finish                    %1$d                 %2$d</string>
+    <string name="checkout_percentage_line">Checkout %                         %1$s                 %2$s</string>
+    <string name="scores_header">Scores</string>
+    <string name="score_180_line">180                                      %1$d                       %2$d</string>
+    <string name="score_160_plus_line">160+                                     %1$d                        %2$d</string>
+    <string name="score_140_plus_line">140+                                     %1$d                         %2$d</string>
+    <string name="score_120_plus_line">120+                                     %1$d                        %2$d</string>
+    <string name="score_100_plus_line">100+                                     %1$d                          %2$d</string>
+    <string name="score_80_plus_line">80+                                      %1$d                         %2$d</string>
+    <string name="score_60_plus_line">60+                                      %1$d                         %2$d</string>
+    <string name="score_40_plus_line">40+                                      %1$d                          %2$d</string>
+    <string name="score_0_plus_line">0+                                       %1$d                          %2$d</string>
+    <string name="ok_button">OK</string>
 </resources>
