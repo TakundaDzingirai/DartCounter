@@ -28,14 +28,14 @@
     <string name="nine_dart_avg_text">9-Dart AVG: %1$s</string>
     <string name="audio_not_found_toast">Audio file for score %1$d not found, using TTS fallback</string>
     <string name="audio_error_toast">Error playing audio: %1$s</string>
-    <string name="game_over_title">Game Over</string>
+    <string name="game_over_title">Game Over - %1$s has won!</string>
     <string name="statistics_header">Statistics</string>
     <string name="three_dart_avg_line">3-Dart Avg.                          %1$s                  %2$s</string>
     <string name="first_nine_avg_line">First 9 Avg.                         %1$s                  %2$s</string>
     <string name="highest_score_line">Highest Score                     %1$d                 %2$d</string>
     <string name="checkouts_header">Checkouts</string>
     <string name="highest_finish_line">Highest Finish                    %1$d                 %2$d</string>
-    <string name="checkout_percentage_line">Checkout %                         %1$s                 %2$s</string>
+    <string name="checkout_percentage_line">Checkout %%                         %1$s                 %2$s</string>
     <string name="scores_header">Scores</string>
     <string name="score_180_line">180                                      %1$d                       %2$d</string>
     <string name="score_160_plus_line">160+                                     %1$d                        %2$d</string>

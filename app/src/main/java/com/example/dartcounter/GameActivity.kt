@@ -1,17 +1,20 @@
 package com.example.dartcounter
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import java.util.Locale
 
 class GameActivity : AppCompatActivity() {
+
+    private val TAG = "GameActivity"
 
     // Constants
     companion object {
@@ -22,53 +25,6 @@ class GameActivity : AppCompatActivity() {
         private const val TURNS_FOR_9_DART = 3
         private const val TARGET_LEGS_KEY = "TARGET_NUMBER"
     }
-
-    // Player game state with additional stats
-    data class Player(
-        var score: Int = INITIAL_SCORE,
-        var legs: Int = 0,
-        var sets: Int = 0,
-        var dartsThrownThisLeg: Int = 0,
-        var totalDartsThrown: Int = 0,
-        var totalScoreThrown: Int = 0,
-        var lastScore: Int = 0,
-        var nineDartTotal: Int = 0,
-        var nineDartLegs: Int = 0,
-        var turnsThisLeg: Int = 0,
-        var nineDartTemp: Int = 0,
-        var name: String = "Player",
-        // Additional stats
-        var highestScore: Int = 0,
-        var highestFinish: Int = 0,
-        var checkoutAttempts: Int = 0,
-        var successfulCheckouts: Int = 0,
-        // Score frequency buckets (0-39, 40-59, ..., 160-179)
-        var scores0to39: Int = 0,
-        var scores40to59: Int = 0,
-        var scores60to79: Int = 0,
-        var scores80to99: Int = 0,
-        var scores100to119: Int = 0,
-        var scores120to139: Int = 0,
-        var scores140to159: Int = 0,
-        var scores160to179: Int = 0
-    ) {
-        val nineDartAverage: Float
-            get() = if (nineDartLegs > 0) nineDartTotal.toFloat() / (nineDartLegs * TURNS_FOR_9_DART) else 0.0f
-        val threeDartAverage: Float
-            get() = if (totalDartsThrown > 0) totalScoreThrown.toFloat() / (totalDartsThrown / 3.0f) else 0.0f
-        val checkoutPercentage: Float
-            get() = if (checkoutAttempts > 0) (successfulCheckouts.toFloat() / checkoutAttempts) * 100 else 0.0f
-    }
-
-    // UI holder for each player
-    data class PlayerUI(
-        val legsText: TextView,
-        val scoreText: TextView,
-        val avgText: TextView,
-        val nineDartAvgText: TextView,
-        val lastScoreText: TextView,
-        val dartsThrownText: TextView
-    )
 
     // Game state
     private val player1 = Player()
@@ -82,20 +38,41 @@ class GameActivity : AppCompatActivity() {
     private lateinit var tts: TextToSpeech
     private var targetLegs: Int = 1 // Default value, overridden by intent
 
+    // UI holder for each player
+    data class PlayerUI(
+        val legsText: TextView,
+        val scoreText: TextView,
+        val avgText: TextView,
+        val nineDartAvgText: TextView,
+        val lastScoreText: TextView,
+        val dartsThrownText: TextView
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
+        Log.d(TAG, "onCreate: Starting GameActivity")
 
         // Get target number of legs from intent
         targetLegs = intent.getIntExtra(TARGET_LEGS_KEY, 1)
 
         // Initialize MediaPlayer
-        mediaPlayer = MediaPlayer()
+        mediaPlayer = MediaPlayer().apply {
+            setOnErrorListener { _, what, extra ->
+                Log.e(TAG, "MediaPlayer error: $what, $extra")
+                Toast.makeText(this@GameActivity, "MediaPlayer error: $what, $extra", Toast.LENGTH_SHORT).show()
+                false
+            }
+        }
 
         // Initialize TextToSpeech for fallback
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 tts.language = Locale.US
+            } else {
+                Log.e(TAG, "TTS initialization failed: $status")
+                Toast.makeText(this@GameActivity, "TTS initialization failed", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -133,16 +110,16 @@ class GameActivity : AppCompatActivity() {
         updatePlayerUI(player1, player1UI)
         updatePlayerUI(player2, player2UI)
         val isLegsMode = intent.getBooleanExtra("IS_LEGS_MODE", true)
-        modeText.setText(getString(R.string.mode_text, if (isLegsMode) "Legs" else "Sets", targetLegs))
+        modeText.text = getString(R.string.mode_text, if (isLegsMode) getString(R.string.first_to_legs) else getString(R.string.first_to_sets_3_legs_per_set), targetLegs)
 
-        currentTurnText.setText(getString(R.string.current_turn_text, player1.name))
+        currentTurnText.text = getString(R.string.current_turn_text, player1.name)
 
         // Button listeners
         numberButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
                 if (currentInput.length < MAX_INPUT_LENGTH) {
                     currentInput += index
-                    totalScoreText.setText(currentInput)
+                    totalScoreText.text = currentInput
                 }
             }
         }
@@ -150,7 +127,7 @@ class GameActivity : AppCompatActivity() {
         backspaceIcon.setOnClickListener {
             if (currentInput.isNotEmpty()) {
                 currentInput = currentInput.dropLast(1)
-                totalScoreText.setText(currentInput.ifEmpty { "" })
+                totalScoreText.text = currentInput.ifEmpty { "" }
             }
         }
 
@@ -168,7 +145,7 @@ class GameActivity : AppCompatActivity() {
                 }
             } ?: showToast(getString(R.string.invalid_input_message))
             currentInput = ""
-            totalScoreText.setText("")
+            totalScoreText.text = ""
         }
     }
 
@@ -184,14 +161,14 @@ class GameActivity : AppCompatActivity() {
                 handleLegWin(currentPlayer, currentUI, otherPlayer, otherUI, turnText)
             } else {
                 isPlayer1Turn = !isPlayer1Turn
-                turnText.setText(getString(R.string.current_turn_text, otherPlayer.name))
+                turnText.text = getString(R.string.current_turn_text, otherPlayer.name)
             }
         } else {
             showToast(getString(R.string.invalid_score_message))
         }
     }
 
-    private fun updatePlayerStats(player: Player, ui: PlayerUI, score: Int, diff: Int) { // Added diff as a parameter
+    private fun updatePlayerStats(player: Player, ui: PlayerUI, score: Int, diff: Int) {
         player.apply {
             // Update highest score
             if (score > highestScore) highestScore = score
@@ -257,25 +234,35 @@ class GameActivity : AppCompatActivity() {
 
         // Check for game over
         if (winner.legs == targetLegs) {
-            showStatsDialog(winner.name)
-            disableGameInput()
+            Log.d(TAG, "Game over: ${winner.name} won, launching StatsActivity")
+            try {
+                showStatsActivity(winner.name)
+                disableGameInput()
+                // Do not finish immediately; wait for StatsActivity to take over
+                // finish() will be handled in onActivityResult or by StatsActivity
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to handle game over: ${e.message}", e)
+                showToast("Failed to show stats: ${e.message}")
+                // Fallback: Return to MatchActivity if StatsActivity fails
+                navigateToMatchActivity()
+            }
             return
         }
 
         isPlayer1Start = !isPlayer1Start
         isPlayer1Turn = isPlayer1Start
-        turnText.setText(getString(R.string.current_turn_text, if (isPlayer1Turn) player1.name else player2.name))
+        turnText.text = getString(R.string.current_turn_text, if (isPlayer1Turn) player1.name else player2.name)
     }
 
     private fun updatePlayerUI(player: Player, ui: PlayerUI) {
         ui.apply {
-            legsText.setText(getString(R.string.legs_text, player.name, player.legs))
-            scoreText.setText(player.score.toString())
-            dartsThrownText.setText(getString(R.string.darts_thrown_text, player.dartsThrownThisLeg * DARTS_PER_TURN))
-            lastScoreText.setText(getString(R.string.last_score_text, player.lastScore))
+            legsText.text = getString(R.string.legs_text, player.name, player.legs)
+            scoreText.text = player.score.toString()
+            dartsThrownText.text = getString(R.string.darts_thrown_text, player.dartsThrownThisLeg * DARTS_PER_TURN)
+            lastScoreText.text = getString(R.string.last_score_text, player.lastScore)
             val threeDartAvg = player.threeDartAverage
-            avgText.setText(getString(R.string.three_dart_avg_text, String.format("%.1f", threeDartAvg)))
-            nineDartAvgText.setText(getString(R.string.nine_dart_avg_text, String.format("%.1f", player.nineDartAverage)))
+            avgText.text = getString(R.string.three_dart_avg_text, String.format(Locale.getDefault(), "%.1f", threeDartAvg))
+            nineDartAvgText.text = getString(R.string.nine_dart_avg_text, String.format(Locale.getDefault(), "%.1f", player.nineDartAverage))
         }
     }
 
@@ -285,6 +272,7 @@ class GameActivity : AppCompatActivity() {
         val audioResName = "score${score}"
         val audioResId = resources.getIdentifier(audioResName, "raw", packageName)
         if (audioResId == 0) {
+            Log.w(TAG, "Audio file for score $score not found, using TTS fallback")
             showToast(getString(R.string.audio_not_found_toast, score))
             tts.speak(score.toString(), TextToSpeech.QUEUE_FLUSH, null, null)
             return
@@ -296,6 +284,7 @@ class GameActivity : AppCompatActivity() {
             mediaPlayer.prepare()
             mediaPlayer.start()
         } catch (e: Exception) {
+            Log.e(TAG, "Error playing audio for score $score: ${e.message}", e)
             showToast(getString(R.string.audio_error_toast, e.message))
             tts.speak(score.toString(), TextToSpeech.QUEUE_FLUSH, null, null)
         }
@@ -305,39 +294,23 @@ class GameActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showStatsDialog(winnerName: String) {
-        val statsBuilder = StringBuilder()
-        statsBuilder.append(getString(R.string.statistics_header))
-        statsBuilder.append("\n                                    ${player1.name}              ${player2.name}\n")
-        statsBuilder.append(getString(R.string.three_dart_avg_line, String.format("%.2f", player1.threeDartAverage), String.format("%.2f", player2.threeDartAverage)))
-        statsBuilder.append(getString(R.string.first_nine_avg_line, String.format("%.2f", player1.nineDartAverage), String.format("%.2f", player2.nineDartAverage)))
-        statsBuilder.append(getString(R.string.highest_score_line, player1.highestScore, player2.highestScore))
-        statsBuilder.append("\n${getString(R.string.checkouts_header)}\n")
-        statsBuilder.append(getString(R.string.highest_finish_line, player1.highestFinish, player2.highestFinish))
-        statsBuilder.append(getString(R.string.checkout_percentage_line, String.format("%.1f", player1.checkoutPercentage), String.format("%.1f", player2.checkoutPercentage)))
-        statsBuilder.append("\n${getString(R.string.scores_header)}\n")
-        statsBuilder.append(getString(R.string.score_180_line, player1.scores160to179, player2.scores160to179))
-        statsBuilder.append(getString(R.string.score_160_plus_line, player1.scores160to179, player2.scores160to179))
-        statsBuilder.append(getString(R.string.score_140_plus_line, player1.scores140to159, player2.scores140to159))
-        statsBuilder.append(getString(R.string.score_120_plus_line, player1.scores120to139, player2.scores120to139))
-        statsBuilder.append(getString(R.string.score_100_plus_line, player1.scores100to119, player2.scores100to119))
-        statsBuilder.append(getString(R.string.score_80_plus_line, player1.scores80to99, player2.scores80to99))
-        statsBuilder.append(getString(R.string.score_60_plus_line, player1.scores60to79, player2.scores60to79))
-        statsBuilder.append(getString(R.string.score_40_plus_line, player1.scores40to59, player2.scores40to59))
-        statsBuilder.append(getString(R.string.score_0_plus_line, player1.scores0to39, player2.scores0to39))
-
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.game_over_title))
-            .setMessage(statsBuilder.toString())
-            .setPositiveButton(getString(R.string.ok_button)) { dialog, _ ->
-                dialog.dismiss()
-                finish()
-            }
-            .setCancelable(false)
-            .show()
+    private fun showStatsActivity(winnerName: String) {
+        val intent = Intent(this, StatsActivity::class.java)
+        intent.putExtra("WINNER_NAME", winnerName)
+        intent.putExtra("PLAYER1", player1)
+        intent.putExtra("PLAYER2", player2)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP) // Ensure new task and clear back stack
+        Log.d(TAG, "Launching StatsActivity with intent: $intent, Class: ${StatsActivity::class.java.name}")
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to launch StatsActivity: ${e.message}", e)
+            showToast("Failed to launch StatsActivity: ${e.message}")
+        }
     }
 
     private fun disableGameInput() {
+        // Disable all input buttons to prevent further gameplay
         findViewById<Button>(R.id.submitScoreButton).isEnabled = false
         (0..9).forEach { buttonId ->
             findViewById<Button>(resources.getIdentifier("btn$buttonId", "id", packageName))?.isEnabled = false
@@ -345,8 +318,17 @@ class GameActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.backspaceIcon).isEnabled = false
     }
 
+    private fun navigateToMatchActivity() {
+        Log.w(TAG, "Falling back to MatchActivity due to StatsActivity launch failure")
+        val intent = Intent(this, MatchActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP) // Clear stack and bring to top
+        startActivity(intent)
+        finish() // Close GameActivity to prevent back navigation
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "onDestroy: Cleaning up resources")
         mediaPlayer.release()
         tts.shutdown()
     }

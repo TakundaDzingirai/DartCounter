@@ -16,6 +16,10 @@
         <activity android:name=".PlayerRegistrationActivity" />
         <activity android:name=".MatchActivity" />
         <activity
+            android:name=".StatsActivity"
+           >
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
