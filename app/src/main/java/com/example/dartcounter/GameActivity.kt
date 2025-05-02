@@ -175,14 +175,15 @@ class GameActivity : AppCompatActivity() {
 
             // Update score frequency buckets
             when (score) {
-                in 0..39 -> scores0to39++
-                in 40..59 -> scores40to59++
-                in 60..79 -> scores60to79++
-                in 80..99 -> scores80to99++
-                in 100..119 -> scores100to119++
-                in 120..139 -> scores120to139++
-                in 140..159 -> scores140to159++
+                180 -> scores180++
                 in 160..179 -> scores160to179++
+                in 140..159 -> scores140to159++
+                in 120..139 -> scores120to139++
+                in 100..119 -> scores100to119++
+                in 80..99 -> scores80to99++
+                in 60..79 -> scores60to79++
+                in 40..59 -> scores40to59++
+                in 0..39 -> scores0to39++
             }
 
             // 9-dart average logic
@@ -203,17 +204,26 @@ class GameActivity : AppCompatActivity() {
             totalDartsThrown += DARTS_PER_TURN
             lastScore = score
 
-            // Track checkout attempts and highest finish (only on last turn of leg)
-            if (diff == 0 && turnsThisLeg > 0) { // Check if this is the final turn (checkout)
+            // Track checkout attempts and successful checkouts
+            if (diff == 0) { // Successful checkout
                 checkoutAttempts++
                 successfulCheckouts++
                 if (score > highestFinish) highestFinish = score
-            } else if (turnsThisLeg > 0) { // Any other turn in the leg counts as a checkout attempt
+            } else if (isCheckoutOpportunity(score, diff)) { // Checkout attempt but not successful
                 checkoutAttempts++
             }
 
             updatePlayerUI(this, ui)
         }
+    }
+
+    private fun isCheckoutOpportunity(score: Int, remaining: Int): Boolean {
+        // A checkout opportunity occurs when the remaining score is a valid checkout (2 to 170, excluding bogey numbers)
+        // and can be finished with a double in three darts or fewer
+        if (remaining !in 2..170) return false
+        val bogeyNumbers = setOf(169, 168, 166, 165, 163, 162, 159)
+        if (remaining in bogeyNumbers) return false
+        return true
     }
 
     private fun handleLegWin(
@@ -238,12 +248,9 @@ class GameActivity : AppCompatActivity() {
             try {
                 showStatsActivity(winner.name)
                 disableGameInput()
-                // Do not finish immediately; wait for StatsActivity to take over
-                // finish() will be handled in onActivityResult or by StatsActivity
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to handle game over: ${e.message}", e)
                 showToast("Failed to show stats: ${e.message}")
-                // Fallback: Return to MatchActivity if StatsActivity fails
                 navigateToMatchActivity()
             }
             return
@@ -299,7 +306,7 @@ class GameActivity : AppCompatActivity() {
         intent.putExtra("WINNER_NAME", winnerName)
         intent.putExtra("PLAYER1", player1)
         intent.putExtra("PLAYER2", player2)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP) // Ensure new task and clear back stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         Log.d(TAG, "Launching StatsActivity with intent: $intent, Class: ${StatsActivity::class.java.name}")
         try {
             startActivity(intent)
@@ -310,7 +317,6 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun disableGameInput() {
-        // Disable all input buttons to prevent further gameplay
         findViewById<Button>(R.id.submitScoreButton).isEnabled = false
         (0..9).forEach { buttonId ->
             findViewById<Button>(resources.getIdentifier("btn$buttonId", "id", packageName))?.isEnabled = false
@@ -321,9 +327,9 @@ class GameActivity : AppCompatActivity() {
     private fun navigateToMatchActivity() {
         Log.w(TAG, "Falling back to MatchActivity due to StatsActivity launch failure")
         val intent = Intent(this, MatchActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP) // Clear stack and bring to top
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         startActivity(intent)
-        finish() // Close GameActivity to prevent back navigation
+        finish()
     }
 
     override fun onDestroy() {
