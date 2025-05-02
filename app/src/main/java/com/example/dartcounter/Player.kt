@@ -21,7 +21,7 @@ data class Player(
     var highestFinish: Int = 0,
     var checkoutAttempts: Int = 0,
     var successfulCheckouts: Int = 0,
-    // Score frequency buckets (0-39, 40-59, ..., 160-179)
+    // Score frequency buckets
     var scores0to39: Int = 0,
     var scores40to59: Int = 0,
     var scores60to79: Int = 0,
@@ -29,7 +29,8 @@ data class Player(
     var scores100to119: Int = 0,
     var scores120to139: Int = 0,
     var scores140to159: Int = 0,
-    var scores160to179: Int = 0
+    var scores160to179: Int = 0,
+    var scores180: Int = 0 // Added to track exactly 180 scores
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
@@ -55,7 +56,8 @@ data class Player(
         parcel.readInt(),
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readInt() // Added for scores180
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -83,6 +85,7 @@ data class Player(
         parcel.writeInt(scores120to139)
         parcel.writeInt(scores140to159)
         parcel.writeInt(scores160to179)
+        parcel.writeInt(scores180) // Added for scores180
     }
 
     override fun describeContents(): Int = 0

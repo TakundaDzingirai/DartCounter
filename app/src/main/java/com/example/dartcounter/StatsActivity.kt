@@ -47,14 +47,20 @@ class StatsActivity : AppCompatActivity() {
             return
         }
 
-        // Find the TextView to display stats
-        val statsTitle = findViewById<TextView>(R.id.statsTitle)
-        val statsText = findViewById<TextView>(R.id.statsText)
+        // Set up UI elements
         try {
+            // Set title with winner's name
+            val statsTitle = findViewById<TextView>(R.id.statsTitle)
             statsTitle.text = safeGetString(R.string.game_over_title, winner)
-            statsText.text = buildStatsString(player1, player2)
+
+            // Set player names
+            findViewById<TextView>(R.id.Player1).text = player1.name
+            findViewById<TextView>(R.id.Player2).text = player2.name
+
+            // Populate table with statistics
+            populateStatsTable(player1, player2)
         } catch (e: Exception) {
-            Log.e(TAG, "Error setting stats text: ${e.message}", e)
+            Log.e(TAG, "Error setting stats: ${e.message}", e)
             Toast.makeText(this, "Error displaying stats: ${e.message}", Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -75,42 +81,71 @@ class StatsActivity : AppCompatActivity() {
         }
     }
 
-    private fun buildStatsString(p1: Player, p2: Player): String {
-        val statsBuilder = StringBuilder()
+    private fun populateStatsTable(p1: Player, p2: Player) {
         try {
-            statsBuilder.append(getString(R.string.statistics_header))
-            statsBuilder.append("\n                                    ${p1.name}              ${p2.name}\n")
-            statsBuilder.append(safeGetString(R.string.three_dart_avg_line, String.format(Locale.getDefault(), "%.2f", p1.threeDartAverage), String.format(Locale.getDefault(), "%.2f", p2.threeDartAverage)))
-            statsBuilder.append(safeGetString(R.string.first_nine_avg_line, String.format(Locale.getDefault(), "%.2f", p1.nineDartAverage), String.format(Locale.getDefault(), "%.2f", p2.nineDartAverage)))
-            statsBuilder.append(safeGetString(R.string.highest_score_line, p1.highestScore, p2.highestScore))
-            statsBuilder.append("\n${getString(R.string.checkouts_header)}\n")
-            statsBuilder.append(safeGetString(R.string.highest_finish_line, p1.highestFinish, p2.highestFinish))
-            statsBuilder.append(safeGetString(R.string.checkout_percentage_line, String.format(Locale.getDefault(), "%.1f", p1.checkoutPercentage), String.format(Locale.getDefault(), "%.1f", p2.checkoutPercentage)))
-            statsBuilder.append("\n${getString(R.string.scores_header)}\n")
-            statsBuilder.append(safeGetString(R.string.score_180_line, p1.scores160to179, p2.scores160to179))
-            statsBuilder.append(safeGetString(R.string.score_160_plus_line, p1.scores160to179, p2.scores160to179))
-            statsBuilder.append(safeGetString(R.string.score_140_plus_line, p1.scores140to159, p2.scores140to159))
-            statsBuilder.append(safeGetString(R.string.score_120_plus_line, p1.scores120to139, p2.scores120to139))
-            statsBuilder.append(safeGetString(R.string.score_100_plus_line, p1.scores100to119, p2.scores100to119))
-            statsBuilder.append(safeGetString(R.string.score_80_plus_line, p1.scores80to99, p2.scores80to99))
-            statsBuilder.append(safeGetString(R.string.score_60_plus_line, p1.scores60to79, p2.scores60to79))
-            statsBuilder.append(safeGetString(R.string.score_40_plus_line, p1.scores40to59, p2.scores40to59))
-            statsBuilder.append(safeGetString(R.string.score_0_plus_line, p1.scores0to39, p2.scores0to39))
-        } catch (e: Exception) {
-            Log.e(TAG, "Error building stats string: ${e.message}", e)
-            throw e // Re-throw to ensure the error is caught in onCreate
-        }
+            // Legs
+            findViewById<TextView>(R.id.player1Legs).text = p1.legs.toString()
+            findViewById<TextView>(R.id.player2Legs).text = p2.legs.toString()
 
-        return statsBuilder.toString()
+            // Three Dart Average
+            findViewById<TextView>(R.id.player1ThreeDartAvg).text = String.format(Locale.getDefault(), "%.2f", p1.threeDartAverage)
+            findViewById<TextView>(R.id.player2ThreeDartAvg).text = String.format(Locale.getDefault(), "%.2f", p2.threeDartAverage)
+
+            // First Nine Dart Average
+            findViewById<TextView>(R.id.player1NineDartAvg).text = String.format(Locale.getDefault(), "%.2f", p1.nineDartAverage)
+            findViewById<TextView>(R.id.player2NineDartAvg).text = String.format(Locale.getDefault(), "%.2f", p2.nineDartAverage)
+
+            // Highest Score
+            findViewById<TextView>(R.id.player1HighestScore).text = if (p1.highestScore > 0) p1.highestScore.toString() else "-"
+            findViewById<TextView>(R.id.player2HighestScore).text = if (p2.highestScore > 0) p2.highestScore.toString() else "-"
+
+            // Highest Finish
+            findViewById<TextView>(R.id.player1HighestFinish).text = if (p1.highestFinish > 0) p1.highestFinish.toString() else "-"
+            findViewById<TextView>(R.id.player2HighestFinish).text = if (p2.highestFinish > 0) p2.highestFinish.toString() else "-"
+
+            // Checkout Percentage
+            findViewById<TextView>(R.id.player1CheckoutPercentage).text = String.format(Locale.getDefault(), "%.1f%%", p1.checkoutPercentage)
+            findViewById<TextView>(R.id.player2CheckoutPercentage).text = String.format(Locale.getDefault(), "%.1f%%", p2.checkoutPercentage)
+
+            // Score Ranges
+            findViewById<TextView>(R.id.player1Score180).text = p1.scores180.toString()
+            findViewById<TextView>(R.id.player2Score180).text = p2.scores180.toString()
+
+            findViewById<TextView>(R.id.player1Score160Plus).text = p1.scores160to179.toString()
+            findViewById<TextView>(R.id.player2Score160Plus).text = p2.scores160to179.toString()
+
+            findViewById<TextView>(R.id.player1Score140Plus).text = p1.scores140to159.toString()
+            findViewById<TextView>(R.id.player2Score140Plus).text = p2.scores140to159.toString()
+
+            findViewById<TextView>(R.id.player1Score120Plus).text = p1.scores120to139.toString()
+            findViewById<TextView>(R.id.player2Score120Plus).text = p2.scores120to139.toString()
+
+            findViewById<TextView>(R.id.player1Score100Plus).text = p1.scores100to119.toString()
+            findViewById<TextView>(R.id.player2Score100Plus).text = p2.scores100to119.toString()
+
+            findViewById<TextView>(R.id.player1Score80Plus).text = p1.scores80to99.toString()
+            findViewById<TextView>(R.id.player2Score80Plus).text = p2.scores80to99.toString()
+
+            findViewById<TextView>(R.id.player1Score60Plus).text = p1.scores60to79.toString()
+            findViewById<TextView>(R.id.player2Score60Plus).text = p2.scores60to79.toString()
+
+            findViewById<TextView>(R.id.player1Score40Plus).text = p1.scores40to59.toString()
+            findViewById<TextView>(R.id.player2Score40Plus).text = p2.scores40to59.toString()
+
+            findViewById<TextView>(R.id.player1Score0Plus).text = p1.scores0to39.toString()
+            findViewById<TextView>(R.id.player2Score0Plus).text = p2.scores0to39.toString()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error populating stats table: ${e.message}", e)
+            throw e // Re-throw to be caught in onCreate
+        }
     }
 
     private fun onOkClick() {
-        finish() // Close StatsActivity and return to GameActivity or previous activity
+        finish() // Close StatsActivity and return to previous activity
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: Cleaning up resources")
-        // No additional cleanup needed since Player objects are Parcelable and managed by the system
     }
 }
